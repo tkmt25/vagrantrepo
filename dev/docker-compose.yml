@@ -1,0 +1,20 @@
+version: '3.0'
+
+services: 
+  repo:
+    build: ../repo
+    environment:
+      PORT     : 8080
+      DATA_DIR : /data
+    volumes:
+      - ./data:/data
+    ports:
+      - 8080:8080
+  
+  webui:
+    build: ../webui
+    environment:
+      PORT: 80
+    ports:
+      - 80:80
+
