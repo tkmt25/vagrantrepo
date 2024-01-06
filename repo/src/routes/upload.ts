@@ -8,17 +8,18 @@ import fsp from 'fs/promises';
 const router = express.Router();
 
 // upload a box file
-router.put('/upload/:org/:box/:version/:provider', express.raw({ type: 'application/octet-stream', limit: config.file_limit }), async (req:Request, res:Response) => {
+router.put('/upload/:org/:box/:version/:provider/:architecture?', express.raw({ type: 'application/octet-stream', limit: config.file_limit }), async (req:Request, res:Response) => {
     const org = req.params.org;
     const box = req.params.box;
     const version = req.params.version;
     const provider = req.params.provider;
+    const architecture = req.params.architecture || "noarch";
     const boxdir = boxDir(org, box);
 
     try {
         await fsp.mkdir(boxdir, {recursive: true});
 
-        const boxfilePath = boxFilePath(org, box, version, provider);
+        const boxfilePath = boxFilePath(org, box, version, provider, architecture);
         const stream = fs.createWriteStream(boxfilePath);
         req.pipe(stream);
         

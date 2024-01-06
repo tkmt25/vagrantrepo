@@ -1,4 +1,5 @@
 import express from 'express';
+import ExpressMongoSanitize from 'express-mongo-sanitize';
 
 import auth from './auth';
 import search from './search';
@@ -11,6 +12,7 @@ const router = express.Router();
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
+router.use(ExpressMongoSanitize());
 
 router.use('/api/v1', auth);
 router.use('/api/v1', organization);

@@ -1,20 +1,32 @@
-import { userStore } from "../data_access/StoreFactory"
+import crypto from "crypto";
 import config from "../config";
-import { User } from "../data_access/DataTypes";
+import { Organization, User, UserRole } from "../data_access/DataSchema";
 
-const store = userStore();
+async function createUser(name:string, password:string, role:UserRole) {
+    const hash = crypto.createHash('sha1');
+    hash.update(password);
 
-const initialUsers:User[] = [
-    {
-        name: config.admin_username,
-        passwordHash: "",
-        roles: [],
-        organizationNames: []
-    },
-    {
-        name: config.admin_username,
-        passwordHash: "",
-        roles: [],
-        organizationNames: []
-    },
-]; 
+    return new User({
+        name: name,
+        passwordHash: hash.digest('hex'),
+        role: role,
+    }).save();
+}
+
+async function setupUser() {
+    // delete exists admin user
+    await User.deleteOne({role: UserRole.Admin});
+    await User.deleteOne({role: UserRole.Guest});
+
+    await createUser(config.admin_username, config.admin_password, UserRole.Admin);
+    await createUser("guest", "guest", UserRole.Guest);
+    
+    // test org
+    await Organization.deleteOne({username: "test"});
+    await new Organization({
+        username: "test",
+        boxes: []
+    }).save();
+}
+
+export default setupUser;

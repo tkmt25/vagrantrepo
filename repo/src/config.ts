@@ -6,6 +6,7 @@ const data_dir = process.env.DATA_DIR || path.resolve(__dirname, "../data");
 const config = {
     port: port,
     data_dir: data_dir,
+    db_url: process.env.DB_URL,
     base_url: process.env.BASE_URL || `http://localhost:${port}`,
     file_limit: process.env.FILE_LIMIT || '30gb',
     public_key_path: process.env.PUBLIC_KEY_PATH || path.resolve(data_dir, 'public.key'),

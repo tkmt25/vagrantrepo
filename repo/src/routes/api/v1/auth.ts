@@ -1,11 +1,11 @@
 import express from 'express';
 import { Request, Response } from 'express';
 import crypto from 'crypto';
-import { userStore } from '../../../data_access/StoreFactory';
 import { TokenPayload, createAuthToken, verifyTokenMiddleware } from '../../../util/authtoken';
+import { User } from '../../../data_access/DataSchema';
+import StatusCodes from 'http-status-codes';
 
 const router = express.Router();
-const store = userStore();
 
 // create token 
 router.post('/authenticate', async (req: Request, res: Response) => {
@@ -14,16 +14,16 @@ router.post('/authenticate', async (req: Request, res: Response) => {
 
     // verify user
     try {
-        const user = await store.retrieve(username);
+        const user = await User.findOne({name: username});
         const sha1 = crypto.createHash('sha1');
         sha1.update(password);
         const hash = sha1.digest('hex');
-        if (hash !== user.passwordHash) {
-            return res.status(401).end();
+        if (hash !== user?.passwordHash) {
+            return res.status(StatusCodes.UNAUTHORIZED).end();
         }
     } catch (e) {
         console.error(e);
-        return res.status(401).end();
+        return res.status(StatusCodes.UNAUTHORIZED).end();
     }
 
     // create token
@@ -31,7 +31,7 @@ router.post('/authenticate', async (req: Request, res: Response) => {
     const hash = crypto.createHash('sha256');
     hash.update(token);
 
-    return res.status(200)
+    return res.status(StatusCodes.OK)
         .set('Authorization', `Bearer ${token}`)
         .json({
             token: token,
@@ -42,12 +42,12 @@ router.post('/authenticate', async (req: Request, res: Response) => {
 
 // verify token
 router.get('/authenticate', verifyTokenMiddleware, async (req: Request, res: Response) => {
-    return res.status(200).end();
+    return res.status(StatusCodes.OK).end();
 });
 
 // delete token 
 router.delete('/authenticate', verifyTokenMiddleware, async (req: Request, res: Response) => {
-    return res.status(200).end();
+    return res.status(StatusCodes.OK).end();
 });
 
 export default router;

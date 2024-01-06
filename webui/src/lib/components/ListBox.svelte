@@ -2,11 +2,11 @@
     import { onMount } from "svelte";
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
-
+    
     let boxes:any[] = [];
     async function search(q:string) {
         const response = await fetch(
-            `http://192.168.0.200:3010/api/v1/search?q=${q}`
+            `${config.apiUrl}api/v1/search?q=${q}`
         );
         boxes = await response.json();
         console.log("response", boxes);

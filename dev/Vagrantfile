@@ -1,11 +1,17 @@
 Vagrant.configure("2") do |config|
-    config.vm.box = "ubuntu/bionic64"
+    #config.vm.box = "ubuntu/jammy64"
+    config.vm.box = "ubuntu/focal64"
 
     config.vm.provider "virtualbox" do |vb|
-        vb.memory = 2048
+        vb.memory = 4096
         vb.cpus = 2
         vb.customize ["modifyvm", :id, "--ioapic", "on"]
+        vb.customize ["modifyvm", :id, "--cpu-profile", "host"]
     end
+
+    config.vm.network "forwarded_port", guest: 8080, host: 8080
+    config.vm.network "forwarded_port", guest: 80, host: 80
+    config.vm.synced_folder "../", "/home/vagrant/root"
 
     config.vm.provision "shell", inline: <<-SHELL
         apt update -y 

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import crypto from "crypto";
 import config from "../config";
+import { StatusCodes } from "http-status-codes";
 
 // create or read keypair
 const getKeyPair = (): { publicKey: string; privateKey: string } => {
@@ -40,7 +41,7 @@ function createAuthToken(payload: TokenPayload):string {
 function verifyTokenMiddleware(req:Request, res:Response, next:NextFunction) {
     const authzHeader = req.headers['authorization'];
     if (!authzHeader) {
-        return res.status(401).end();
+        return res.status(StatusCodes.UNAUTHORIZED).end();
     }
 
     const token = authzHeader.split(' ')[1];

@@ -1,37 +1,49 @@
 import express from 'express';
 import { Request, Response } from 'express';
 import config from '../config';
-import fs from 'fs';
-import fsp from 'fs/promises';
 import path from 'path'
-import {dataStore} from '../data_access/StoreFactory';
+import { StatusCodes } from 'http-status-codes';
+import { Organization } from '../data_access/DataSchema';
 
 const router = express.Router();
-const store = dataStore();
 
 // get box info
 router.head('/:org/:box', async (req:Request, res:Response) => {
-    const org = await store.retrieve(req.params.org);
-    const box = org.boxes?.find(e => e.name === req.params.box);
-    if (!box) {
-        return res.status(204).end();
+    const org = await Organization.findOne({
+        'username': req.params.org,
+        'boxes': {
+            $elemMatch: { name: req.params.box }
+        }
+    });
+    if (!org || org.boxes.length === 0) {
+        return res.status(StatusCodes.NOT_FOUND).end();
     }
-    return res.status(200).end();
+
+    const box = org.boxes[0];
+    if (!box) {
+        return res.status(StatusCodes.NOT_FOUND).end();
+    }
+    return res.status(StatusCodes.OK).end();
 });
 
 // get box info
 router.get('/:org/:box', async (req:Request, res:Response) => {
-    const org = await store.retrieve(req.params.org);
-    const box = org.boxes?.find(e => e.name === req.params.box);
-    if (!box) {
-        return res.status(201).end();
+    const org = await Organization.findOne({
+        'username': req.params.org,
+        'boxes': {
+            $elemMatch: { name: req.params.box }
+        }
+    });
+    if (!org || org.boxes.length === 0) {
+        return res.status(StatusCodes.NOT_FOUND).end();
     }
 
+    const box = org.boxes[0];
     // update downloads
     box.downloads++;
-    await store.update(org);
+    await org.save();
 
-    return res.status(200).json({
+    return res.status(StatusCodes.OK).json({
         name: `${box.username}/${box.name}`,
         versions: box.versions?.map(e => {
             return {

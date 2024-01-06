@@ -1,20 +1,38 @@
 version: '3.0'
 
 services: 
+  mongo:
+    image: mongo:5.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+
   repo:
     build: ../repo
     environment:
       PORT     : 8080
       DATA_DIR : /data
-    volumes:
-      - ./data:/data
+      DB_URL   : mongodb://root:password@mongo:27017/
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: password
     ports:
       - 8080:8080
+    volumes:
+      - ./data:/data
+    depends_on:
+      - mongo
   
   webui:
     build: ../webui
     environment:
-      PORT: 80
+      BASE_PATH : http://localhost/
+      API_URL   : http://localhost:8080/
     ports:
       - 80:80
 
+volumes:
+  mongodata:

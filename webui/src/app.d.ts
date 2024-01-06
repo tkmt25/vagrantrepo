@@ -15,4 +15,4 @@ declare global {
 }
 
 declare var config: Config;
-export {};
+export {config};
