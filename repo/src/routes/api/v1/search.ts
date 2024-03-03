@@ -35,11 +35,11 @@ router.get('/search', verifyTokenMiddleware, async (req:Request, res:Response) =
         if (architecture) searchQuery['boxes.providers.architecture'] = architecture;
 
         const orgs = await Organization.find()
-        .limit(limit)
-        .skip(startIndex)
-        .sort({ [`boxes.${sort}`]: order });
+            .limit(limit)
+            .skip(startIndex)
+            .sort({ [`boxes.${sort}`]: order });
         
-        const boxes = orgs.map(o => o.boxes);
+        const boxes = orgs.flatMap(o => o.boxes);
         return res.status(StatusCodes.OK).json(boxes).end();
     } catch(err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();

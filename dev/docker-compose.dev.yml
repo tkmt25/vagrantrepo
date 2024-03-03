@@ -12,7 +12,9 @@ services:
       - mongodata:/data/db
 
   repo:
-    build: ../repo
+    image: node:20-slim
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
     environment:
       PORT     : 8080
       DATA_DIR : /data
@@ -23,14 +25,25 @@ services:
       - 8080:8080
     volumes:
       - ./data:/data
+      - ../repo:/app
     depends_on:
       - mongo
   
-  webui:
-    build: ../webui
+  webui-builder:
+    image: node:20-slim
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
     environment:
       BASE_PATH : http://localhost/
       API_URL   : http://localhost:8080/
+    volumes:
+      - ../webui:/app
+  
+  webui:
+    image: nginx
+    volumes:
+      - ../webui/build:/usr/share/nginx/html 
+      #- ../webui/nginx.conf:/etc/nginx/nginx.conf   
     ports:
       - 80:80
 

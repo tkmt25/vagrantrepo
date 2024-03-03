@@ -1,22 +1,19 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { onMount } from "svelte";
-
+    import config from "../../config";
+    
     onMount(() => {
         const unsubscribe = page.subscribe(($page) => {
             const currentPath = $page.url.pathname;
             const basePath = config.basePath;
-            console.log("basePath", basePath);
 
             const pathSegments = currentPath
                 .replace(basePath, "")
                 .split("/")
                 .filter(Boolean);
-            console.log("pagh", pathSegments);
             items = pathSegments.map((segment, index) => {
-                const href = `${basePath}/${pathSegments
-                    .slice(0, index + 1)
-                    .join("/")}`;
+                const href = `${basePath}${pathSegments.slice(0, index + 1).join("/")}`;
                 const isCurrentPage = index === pathSegments.length - 1;
                 const text = segment; // 実際のプロジェクトではここを適切に変更する
 

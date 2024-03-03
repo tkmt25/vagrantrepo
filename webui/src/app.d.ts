@@ -7,12 +7,5 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
-	
-	interface Config {
-		basePath: string;
-		apiUrl: string;
-	}
 }
 
-declare var config: Config;
-export {config};

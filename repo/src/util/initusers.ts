@@ -22,11 +22,14 @@ async function setupUser() {
     await createUser("guest", "guest", UserRole.Guest);
     
     // test org
-    await Organization.deleteOne({username: "test"});
-    await new Organization({
-        username: "test",
-        boxes: []
-    }).save();
+    const existsTestUser = await Organization.exists({username: "test"});
+    if (!existsTestUser) {
+        //await Organization.deleteOne({username: "test"});
+        await new Organization({
+            username: "test",
+            boxes: []
+        }).save();
+    }
 }
 
 export default setupUser;

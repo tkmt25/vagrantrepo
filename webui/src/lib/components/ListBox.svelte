@@ -1,23 +1,7 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { page } from "$app/stores";
     import { goto } from "$app/navigation";
-    
-    let boxes:any[] = [];
-    async function search(q:string) {
-        const response = await fetch(
-            `${config.apiUrl}api/v1/search?q=${q}`
-        );
-        boxes = await response.json();
-        console.log("response", boxes);
-    }
-
-    $: query = $page.url.searchParams.get('q') || "";
-    $: search(query)
-
-    onMount(async () => {
-        //search(query)
-    });
+        
+    export let boxes:any[] = [];
 </script>
 
 <div class="w-full max-w-md p-4">
@@ -42,7 +26,7 @@
                 </p>
             </div>
         </div>
-        <p class="mb-3 font-normal text-gray-700">{box.short_description || ""}</p>
+        <p class="mb-3 font-normal text-gray-700">{box.short_description}</p>
     </div>    
     {/each}
 </div>

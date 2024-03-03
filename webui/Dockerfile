@@ -10,7 +10,8 @@ RUN npm install -g typescript \
 # exec stage
 FROM nginx:latest
 
-COPY nginx.conf /etc/nginx/conf.d/webui.conf
+#COPY nginx.conf /etc/nginx/conf.d/webui.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
 COPY entrypoint.sh /entrypoint.sh

@@ -1,7 +1,16 @@
+<script lang="ts" context="module">
+	import vagrantrepo from "$lib/common/repo";
+	const role = vagrantrepo.accessToken.role;
+	if(!role) {
+		//await vagrantrepo.guestLogin();
+	}
+
+</script>
+
 <script lang="ts">
 	import "../app.css";
 	import Header from "$lib/components/Header.svelte";
-
+    
 </script>
 
 <div class="app">
@@ -15,7 +24,7 @@
 
 <style lang="postcss">
 	:global(html) {
-        background-color: theme(colors.gray.100);
+		@apply bg-gray-100;
     }
 
 	.app {

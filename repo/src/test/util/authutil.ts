@@ -20,4 +20,8 @@ async function getAdminToken(app:any) {
     return getToken(app, config.admin_username, config.admin_password);
 }
 
-export { getToken, getAdminToken };
+async function getGuestToken(app:any) {
+    return getToken(app, "guest", "guest");
+}
+
+export { getToken, getAdminToken, getGuestToken };

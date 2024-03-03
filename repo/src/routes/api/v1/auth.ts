@@ -18,6 +18,7 @@ router.post('/authenticate', async (req: Request, res: Response) => {
         const sha1 = crypto.createHash('sha1');
         sha1.update(password);
         const hash = sha1.digest('hex');
+        console.log("hash !== user.passwordHash", hash, user?.passwordHash);
         if (hash !== user?.passwordHash) {
             return res.status(StatusCodes.UNAUTHORIZED).end();
         }
