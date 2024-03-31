@@ -23,10 +23,10 @@ router.head('/:org/:box', async (req:Request, res:Response) => {
     if (!box) {
         return res.status(StatusCodes.NOT_FOUND).end();
     }
-    return res.status(StatusCodes.OK).end();
+    return res.status(StatusCodes.OK).type('application/json').end();
 });
 
-// get box info
+// get box
 router.get('/:org/:box', async (req:Request, res:Response) => {
     const org = await Organization.findOne({
         'username': req.params.org,
@@ -42,7 +42,7 @@ router.get('/:org/:box', async (req:Request, res:Response) => {
     // update downloads
     box.downloads++;
     await org.save();
-
+    
     return res.status(StatusCodes.OK).json({
         name: `${box.username}/${box.name}`,
         versions: box.versions?.map(e => {
@@ -60,9 +60,13 @@ router.get('/:org/:box', async (req:Request, res:Response) => {
 });
 
 // download box file
-router.put('/download/:org/:box/:version/:provider', async (req:Request, res:Response) => {
-    const dirPath = path.resolve(config.data_dir, req.params.org, req.params.box);
-    const filePath = path.resolve(dirPath, `${req.params.version}-${req.params.provider}.box`);
+router.get('/download/:org/:box/:version/:provider/:architecture?', async (req:Request, res:Response) => {
+    const dirPath = path.resolve(config.data_dir, "org", req.params.org, req.params.box);
+    let boxfileName = `${req.params.version}-${req.params.provider}`;
+    if (req.params.architecture) {
+        boxfileName += `-${req.params.architecture}`;
+    }
+    const filePath = path.resolve(dirPath, `${boxfileName}.box`);
 
     return res.download(filePath);
 });
